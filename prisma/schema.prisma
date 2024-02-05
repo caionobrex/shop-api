@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  salt      String
+  cart      Cart?     @relation(fields: [cartId], references: [id])
+  role      UserRole  @relation(fields: [roleId], references: [id])
+  roleId    Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  cartId    Int?
+}
+
+model UserRole {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  User      User[]
+}
+
+model Product {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  imgSrc      String?
+  price       Float
+  stock       Int
+  category    Category   @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime?
+  categoryId  Int
+  CartItem    CartItem[]
+}
+
+model Category {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  productsCount Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime?
+  Product       Product[]
+}
+
+model CartItem {
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+  subTotal  Float
+  Cart      Cart    @relation(fields: [cartId], references: [id])
+  cartId    Int
+
+  @@id([productId, cartId])
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  total     Int        @default(0)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?
+  User      User[]
+}
