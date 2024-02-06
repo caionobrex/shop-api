@@ -22,6 +22,7 @@ export class AuthService {
       expiresIn: "1d",
       secret: "dog321",
     });
+    await this.prisma.user.update({ where: { id: payload.sub }, data: { refreshToken: newRefreshToken } })
     return { token: newToken, refreshToken: newRefreshToken };
   }
 
@@ -64,6 +65,7 @@ export class AuthService {
       expiresIn: "1d",
       secret: "dog321",
     });
+    await this.prisma.user.update({ where: { id: payload.sub }, data: { refreshToken } })
     return { token, refreshToken };
   }
 }
