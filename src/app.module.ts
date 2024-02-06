@@ -5,6 +5,7 @@ import { CategoriesModule } from "./categories/categories.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ServeStaticModule } from "@nestjs/serve-static";
     ServeStaticModule.forRoot({
       rootPath: `${process.cwd()}/public`,
     }),
+    RolesModule,
   ],
 })
 export class AppModule {}
