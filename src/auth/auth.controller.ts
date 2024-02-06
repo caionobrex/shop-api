@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post, Request, UseGuards } from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -40,6 +40,9 @@ class LoginDTO {
 class LoginResponse {
   @ApiProperty()
   token: string;
+
+  @ApiProperty()
+  refreshToken: string;
 }
 
 class RegisterResponse {
@@ -81,6 +84,7 @@ export class AuthController {
     status: 200,
     type: LoginResponse,
   })
+  @HttpCode(200)
   @Post("login")
   login(@Body() body: LoginDTO) {
     return this.authService.login(body.email, body.password);
