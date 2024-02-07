@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { NotFoundError } from "rxjs";
 import { PrismaService } from "src/prisma.service";
+import { UpdateCategoryDTO } from "./categories.controller";
 
 @Injectable()
 export class CategoriesService {
@@ -24,5 +25,13 @@ export class CategoriesService {
       throw new ConflictException("Categoria já existe.");
     }
     return await this.prisma.category.create({ data: { name } });
+  }
+
+  async update(id: number, data: UpdateCategoryDTO) {
+    const cat = await this.prisma.category.findFirst({ where: { name: data.name, NOT: { id } } })
+    if (cat) {
+      throw new ConflictException("Categoria já existe.");
+    }
+    await this.prisma.category.update({ where: { id }, data });
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
 import {
   ApiBadRequestResponse,
@@ -10,6 +10,8 @@ import {
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
+  OmitType,
+  PartialType,
 } from "@nestjs/swagger";
 import { Role } from "src/auth/decorators/roles.decorator";
 import { UserRole } from "src/shared/enums/userRole.enum";
@@ -37,6 +39,8 @@ export class CreateCategoryDTO {
   @ApiProperty()
   name: string;
 }
+
+export class UpdateCategoryDTO extends PartialType(CreateCategoryDTO) {}
 
 @Controller("categories")
 @ApiTags("categorias")
@@ -72,5 +76,18 @@ export class CategoriesController {
   })
   async create(@Body() body: CreateCategoryDTO) {
     return this.categoriesService.create(body.name);
+  }
+
+  @Put(":id")
+  @Role(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @ApiBadRequestResponse({ description: "Corpo invalido." })
+  @ApiConflictResponse({ description: "Nome já cadastrado." })
+  async update(
+    @Param("id", new ParseIntPipe()) id: number,
+    @Body() body: UpdateCategoryDTO
+  ) {
+    return this.categoriesService.update(id, body);
   }
 }
