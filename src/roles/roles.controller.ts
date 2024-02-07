@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiProperty, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/shared/enums/userRole.enum';
@@ -14,6 +14,7 @@ class RoleResponse {
   name: string
 }
 
+@ApiTags("funções")
 @Controller('roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
