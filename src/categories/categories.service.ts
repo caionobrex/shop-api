@@ -1,4 +1,5 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { NotFoundError } from "rxjs";
 import { PrismaService } from "src/prisma.service";
 
 @Injectable()
@@ -10,7 +11,11 @@ export class CategoriesService {
   }
 
   async findById(id: number) {
-    return await this.prisma.category.findUnique({ where: { id } });
+    const cat = await this.prisma.category.findUnique({ where: { id } })
+    if (!cat) {
+      throw new NotFoundException()
+    }
+    return cat;
   }
 
   async create(name: string) {
