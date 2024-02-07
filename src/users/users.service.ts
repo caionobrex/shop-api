@@ -32,7 +32,7 @@ export class UsersService {
         skip: (page - 1) * perPage,
         take: perPage,
       }),
-      this.prisma.product.count(),
+      this.prisma.user.count(),
     ]);
     return { users, page, numberOfPages: Math.ceil(totalCount / perPage) };
   }
