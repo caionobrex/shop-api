@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
 import {
   ApiBadRequestResponse,
@@ -47,6 +47,15 @@ export class CategoriesController {
   @ApiResponse({ type: [Category] })
   async findAll() {
     return this.categoriesService.findAll();
+  }
+
+  @Get(":id")
+  @ApiResponse({
+    type: Category,
+    status: 200,
+  })
+  async findById(@Param("id", new ParseIntPipe()) id: number) {
+    return this.categoriesService.findById(id);
   }
 
   @Post()

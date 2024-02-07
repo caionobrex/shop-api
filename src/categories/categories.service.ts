@@ -9,6 +9,10 @@ export class CategoriesService {
     return await this.prisma.category.findMany();
   }
 
+  async findById(id: number) {
+    return await this.prisma.category.findUnique({ where: { id } });
+  }
+
   async create(name: string) {
     const cat = await this.prisma.category.findUnique({ where: { name } });
     if (cat) {
