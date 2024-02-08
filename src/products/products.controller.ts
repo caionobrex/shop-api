@@ -130,7 +130,7 @@ export class ProductsController {
 
   @Get(":id")
   @ApiResponse({
-    type: ProductsResponse,
+    type: Product,
   })
   async findById(@Param("id", new ParseIntPipe()) id: number) {
     return await this.productsService.findById(id);
