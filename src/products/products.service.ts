@@ -130,7 +130,7 @@ export class ProductsService {
       }),
       this.prisma.product.update({
         where: { id },
-        data: { ...data, updatedAt: new Date() },
+        data: { categoryId: +data.categoryId, description: data.description, name: data.name, price: +data.price, stock: +data.stock, updatedAt: new Date() },
         include: { category: true },
       }),
     ]);
