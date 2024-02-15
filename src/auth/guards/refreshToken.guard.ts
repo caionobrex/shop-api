@@ -19,10 +19,6 @@ export class RefreshTokenGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const user = await this.prisma.user.findFirst({ where: { refreshToken } })
-      if (!user) {
-        throw new UnauthorizedException();
-      }
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: "dog321",
       });
