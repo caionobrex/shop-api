@@ -10,8 +10,8 @@ export class CartsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findCart(userId: number) {
-    return await this.prisma.cart.findFirst({
-      where: { User: { every: { id: userId } } },
+    return this.prisma.cart.findFirst({
+      where: { userId },
       include: { items: { include: { product: true } } },
     });
   }
@@ -36,6 +36,35 @@ export class CartsService {
           productId,
           quantity,
           cartId: cart.id,
+          subTotal: product.price * quantity,
+        },
+        include: { product: true },
+      }),
+      this.prisma.cart.update({
+        where: { id: cart.id },
+        data: { total: cart.total + product.price * quantity },
+      }),
+    ]);
+    return item;
+  }
+
+  async updateItem(productId: number, quantity: number, userId: number) {
+    const [cart, product] = await Promise.all([
+      this.prisma.cart.findFirst({
+        where: { userId },
+        include: { items: true },
+      }),
+      this.prisma.product.findUnique({ where: { id: productId } }),
+    ]);
+    if (!product) {
+      throw new NotFoundException("Produto não encontrado.");
+    }
+    cart.total = cart.total - cart.items.find((item) => item.productId === productId).subTotal
+    const [item] = await this.prisma.$transaction([
+      this.prisma.cartItem.update({
+        where: { productId_cartId: { cartId: cart.id, productId } },
+        data: {
+          quantity,
           subTotal: product.price * quantity,
         },
         include: { product: true },

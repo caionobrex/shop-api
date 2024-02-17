@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Request,
   UseGuards,
@@ -48,6 +49,13 @@ export class CartItem {
   cartId: number;
 }
 
+export class UpdateItemDTO {
+  @ApiProperty({ minimum: 1 })
+  @IsInt()
+  @Min(1)
+  quantity: number;
+}
+
 @Controller("carts")
 @ApiTags("carrinhos")
 @ApiBearerAuth()
@@ -73,6 +81,25 @@ export class CartsController {
   ) {
     return this.cartsService.addItem(
       body.productId,
+      body.quantity,
+      req.user.sub
+    );
+  }
+
+  @Patch("updateItem/:id")
+  @ApiCreatedResponse({
+    description: "Item atualizado com sucesso!",
+    type: CartItem,
+  })
+  @ApiNotFoundResponse({ description: "Produto não encontrado." })
+  @ApiBadRequestResponse({ description: "Quantidade inválida." })
+  async updateItem(
+    @Request() req: ExpressRequest & { user: any },
+    @Param("id", new ParseIntPipe()) id: number,
+    @Body() body: UpdateItemDTO
+  ) {
+    return this.cartsService.updateItem(
+      id,
       body.quantity,
       req.user.sub
     );
