@@ -192,6 +192,14 @@ export class ProductsController {
     return this.productsService.update(id, body);
   }
 
+  @Delete("all")
+  @Role(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  async deleteAll() {
+    return this.productsService.deleteAll();
+  }
+
   @Delete(":id")
   @Role(UserRole.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)

@@ -1,5 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common";
-import { CategoriesService } from "./categories.service";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -10,13 +9,13 @@ import {
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
-  OmitType,
-  PartialType,
+  PartialType
 } from "@nestjs/swagger";
 import { Role } from "src/auth/decorators/roles.decorator";
-import { UserRole } from "src/shared/enums/userRole.enum";
 import { AuthGuard } from "src/auth/guards/auth.guard";
 import { RolesGuard } from "src/auth/guards/roles.guard";
+import { UserRole } from "src/shared/enums/userRole.enum";
+import { CategoriesService } from "./categories.service";
 
 export class Category {
   @ApiProperty()
@@ -89,5 +88,21 @@ export class CategoriesController {
     @Body() body: UpdateCategoryDTO
   ) {
     return this.categoriesService.update(id, body);
+  }
+
+  @Delete("all")
+  @Role(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  async deleteAll() {
+    return this.categoriesService.deleteAll();
+  }
+
+  @Delete(':id')
+  @Role(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  async delete(@Param('id') id: number) {
+    return this.categoriesService.delete(+id)
   }
 }

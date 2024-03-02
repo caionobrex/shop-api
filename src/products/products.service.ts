@@ -137,6 +137,10 @@ export class ProductsService {
     return p;
   }
 
+  async deleteAll() {
+    await this.prisma.product.deleteMany();
+  }
+
   async delete(id: number) {
     const product = await this.prisma.product.findUnique({ where: { id } })
     const categoryId = product.categoryId

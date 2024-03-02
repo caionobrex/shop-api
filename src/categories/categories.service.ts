@@ -34,4 +34,12 @@ export class CategoriesService {
     }
     await this.prisma.category.update({ where: { id }, data });
   }
+
+  async deleteAll() {
+    await this.prisma.category.deleteMany();
+  }
+
+  async delete(id: number) {
+    return await this.prisma.category.delete({ where: { id } });
+  }
 }

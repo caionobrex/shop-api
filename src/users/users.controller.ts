@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -170,5 +171,23 @@ export class UsersController {
     @Body() body: UpdateUserDTO
   ) {
     return this.usersService.update(id, body);
+  }
+
+  @Delete("all")
+  @Role(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  async deleteAll() {
+    return this.usersService.deleteAll();
+  }
+
+  @Delete(":id")
+  @Role(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  async delete(
+    @Param("id", new ParseIntPipe()) id: number,
+  ) {
+    return this.usersService.delete(id);
   }
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -87,5 +88,17 @@ export class UsersService {
       },
       select,
     });
+  }
+
+  async deleteAll() {
+    return await this.prisma.user.deleteMany({ where: { roleId: { not: 2 } } });
+  }
+
+  async delete(id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id }, include: { role: true } })
+    if (user.role.name === 'ADMIN') {
+      throw new BadRequestException('Não é possível excluir um usuário administrador')
+    }
+    return await this.prisma.user.delete({ where: { id } });
   }
 }
